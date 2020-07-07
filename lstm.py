@@ -46,7 +46,7 @@ def get_notes():
     """ Get all the notes and chords from the midi files """
     notes = []
 
-    for file in glob.glob("Pokemon MIDIs/*.mid"):
+    for file in glob.glob("MIDIs/*.mid"):
         midi = converter.parse(file)
 
         print("Parsing %s" % file)
