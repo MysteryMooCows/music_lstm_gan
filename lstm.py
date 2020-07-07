@@ -1,4 +1,7 @@
 import glob
+import random
+from random import sample
+
 import numpy as np
 import pandas as pd
 from music21 import converter, instrument, note, chord, stream
@@ -29,7 +32,7 @@ def train_network():
     history = History()
     
     # Fit the model
-    n_epochs = 500
+    n_epochs = 12
     model.summary()
     model.fit(network_input, network_output, callbacks=[history], epochs=n_epochs, batch_size=64)
     model.save('LSTMmodel.h5')
@@ -47,7 +50,7 @@ def get_notes():
     """ Get all the notes and chords from the midi files """
     notes = []
 
-    for file in glob.glob("MIDIs/*.mid"):
+    for file in random.sample(glob.glob("MIDIs/*.mid"), 150):
         midi = converter.parse(file)
 
         print("Parsing %s" % file)
