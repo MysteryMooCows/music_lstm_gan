@@ -6,10 +6,11 @@ from keras.models import Sequential
 from keras.models import load_model
 from keras.layers import Dense
 from keras.layers import Dropout
-from keras.layers import CuDNNLSTM, LSTM, Bidirectional
+from keras.layers import LSTM, LSTM, Bidirectional
 from keras.layers import Activation
 from keras.utils import np_utils
 from keras.callbacks import ModelCheckpoint, History
+import matplotlib.pyplot as plt
 import wandb
 
 def train_network():
@@ -28,14 +29,14 @@ def train_network():
     history = History()
     
     # Fit the model
-    n_epochs = 2
+    n_epochs = 500
     model.summary()
     model.fit(network_input, network_output, callbacks=[history], epochs=n_epochs, batch_size=64)
     model.save('LSTMmodel.h5')
     
     # Use the model to generate a midi
     prediction_output = generate_notes(model, notes, network_input, len(set(notes)))
-    create_midi(prediction_output, 'pokemon_midi')
+    create_midi(prediction_output, 'midi_out')
     
     # Plot the model losses
     pd.DataFrame(history.history).plot()
@@ -69,7 +70,7 @@ def get_notes():
   
 def prepare_sequences(notes, n_vocab):
     """ Prepare the sequences used by the Neural Network """
-    sequence_length = 100
+    sequence_length = 50
 
     # get all pitch names
     pitchnames = sorted(set(item for item in notes))
@@ -94,6 +95,8 @@ def prepare_sequences(notes, n_vocab):
     # normalize input between 0 and 1
     network_input = network_input / float(n_vocab)
 
+    print(np.array(network_output))
+
     network_output = np_utils.to_categorical(network_output)
 
     return (network_input, network_output)
@@ -101,11 +104,11 @@ def prepare_sequences(notes, n_vocab):
 def create_network(network_input, n_vocab):
     """ create the structure of the neural network """
     model = Sequential()
-    model.add(CuDNNLSTM(512,input_shape=(network_input.shape[1], network_input.shape[2]),return_sequences=True))
+    model.add(LSTM(512,input_shape=(network_input.shape[1], network_input.shape[2]),return_sequences=True))
     model.add(Dropout(0.3))
-    model.add(Bidirectional(CuDNNLSTM(512, return_sequences=True)))
+    model.add(Bidirectional(LSTM(512, return_sequences=True)))
     model.add(Dropout(0.3))
-    model.add(Bidirectional(CuDNNLSTM(512)))
+    model.add(Bidirectional(LSTM(512)))
     model.add(Dense(256))
     model.add(Dropout(0.3))
     model.add(Dense(n_vocab))
