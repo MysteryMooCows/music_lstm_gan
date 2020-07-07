@@ -70,7 +70,7 @@ def get_notes():
   
 def prepare_sequences(notes, n_vocab):
     """ Prepare the sequences used by the Neural Network """
-    sequence_length = 50
+    sequence_length = 100
 
     # get all pitch names
     pitchnames = sorted(set(item for item in notes))
