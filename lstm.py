@@ -1,4 +1,3 @@
-% pylab inline
 import glob
 import numpy as np
 import pandas as pd
@@ -11,6 +10,7 @@ from keras.layers import CuDNNLSTM, LSTM, Bidirectional
 from keras.layers import Activation
 from keras.utils import np_utils
 from keras.callbacks import ModelCheckpoint, History
+import wandb
 
 def train_network():
     """ Train a Neural Network to generate music """
