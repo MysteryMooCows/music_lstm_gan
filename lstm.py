@@ -32,7 +32,7 @@ def train_network():
     history = History()
     
     # Fit the model
-    n_epochs = 12
+    n_epochs = 44
     model.summary()
     model.fit(network_input, network_output, callbacks=[history], epochs=n_epochs, batch_size=64)
     model.save('LSTMmodel.h5')
@@ -57,7 +57,7 @@ def get_notes():
 
         notes_to_parse = None
 
-        try: # file has instrument parts
+        try: # file has instrument parts+
             s2 = instrument.partitionByInstrument(midi)
             notes_to_parse = s2.parts[0].recurse() 
         except: # file has notes in a flat structure
@@ -97,8 +97,6 @@ def prepare_sequences(notes, n_vocab):
     
     # normalize input between 0 and 1
     network_input = network_input / float(n_vocab)
-
-    print(np.array(network_output))
 
     network_output = np_utils.to_categorical(network_output)
 
